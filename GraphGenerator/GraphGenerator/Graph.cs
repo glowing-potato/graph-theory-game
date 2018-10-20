@@ -145,14 +145,15 @@ namespace GraphGenerator
                 if (!usedVertices.Contains(cur))
                 {
                     usedVertices.Add(cur);
-                }
-                for (int i = 0; i < order; i++)
-                {
-                    if (adjMatrix[cur,i])
+                    for (int i = 0; i < order; i++)
                     {
-                        stack.Push(i);
+                        if (adjMatrix[cur, i])
+                        {
+                            stack.Push(i);
+                        }
                     }
                 }
+                
             }
             return usedVertices.Count == order;
         }
