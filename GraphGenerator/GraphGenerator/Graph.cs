@@ -30,6 +30,17 @@ namespace GraphGenerator
         private Vertex[] vertices;
         private bool[,] adjMatrix;
 
+        public Graph(int order)
+        {
+            this.order = order;
+            bool[,] adjMatrix = new bool[order, order];
+            this.vertices = new Vertex[order];
+            for (int i = 0; i < order; i++)
+            {
+                vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
+            }
+        }
+
         public Graph(int order, bool[,] adjMatrix)
         {
             this.order = order;
@@ -100,6 +111,16 @@ namespace GraphGenerator
             }
             order--;
             vertices = temp;
+        }
+
+        public int VertexDegree(int vertex)
+        {
+            int degree = 0;
+            for (int i = 0; i < order; i++)
+            {
+                degree += adjMatrix[vertex,i] ? 1 : 0;
+            }
+            return degree;
         }
 
         public void MakePlanar()
@@ -210,6 +231,49 @@ namespace GraphGenerator
         public bool IsIsomorphicTo(Graph g)
         {
             return false;
+        }
+
+        public void SpreadVertices(int iterations, double wallForce, double vertexForce)
+        {
+            for (int itr = 0; itr < iterations; itr++)
+            {
+                for (int i = 0; i < order; i++)
+                {
+                    double forceX = 0;
+                    double forceY = 0;
+                    for (int j = 0; j < order; j++)
+                    {
+                        double force = vertexForce / (Math.Pow(vertices[j].X - vertices[i].X, 2) + Math.Pow(vertices[j].Y - vertices[i].Y, 2));
+                        double angle = Math.Atan2(vertices[j].Y - vertices[i].Y, vertices[j].X - vertices[i].X);
+                        forceX += Math.Cos(angle) * force;
+                        forceY += Math.Sin(angle) * force;
+                    }
+                    forceX += Math.Pow(vertices[i].X - 0.5, 2) * wallForce;
+                    forceY += Math.Pow(vertices[i].Y - 0.5, 2) * wallForce;
+                }
+            }
+        }
+
+        public static Graph GenerateEulerianGraph(int order, Random random, int maxDegree)
+        {
+            Graph g = new Graph(order);
+            int[] degrees = new int[order];
+            for (int i = 0; i < order; i++)
+            {
+                degrees[i] = (int)(random.NextDouble() * (maxDegree / 2)) * 2;
+            }
+            for (int i = 0; i < order; i++)
+            {
+                while (g.VertexDegree(i) < degrees[i])
+                {
+                    int vertex2 = (int)(random.NextDouble() * order);
+                    if (g.VertexDegree(vertex2) < degrees[vertex2])
+                    {
+                        g.AddEdge(i, vertex2);
+                    }
+                }
+            }
+            return g;
         }
 
         public int Order { get => order; }
