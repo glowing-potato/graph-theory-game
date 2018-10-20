@@ -8,10 +8,19 @@ namespace GraphGenerator
 {
     public class Graph
     {
-        private class Vertex
+        public class Vertex
         {
             private double x;
             private double y;
+
+            public Vertex(double x, double y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+
+            public double X { get => x; set => x = value; }
+            public double Y { get => y; set => y = value; }
         }
 
         private int order;
@@ -24,24 +33,112 @@ namespace GraphGenerator
             this.adjMatrix = adjMatrix;
         }
 
+        public Graph(int order, Vertex[] vertices, bool[][] adjMatrix)
+        {
+            this.order = order;
+            this.vertices = vertices;
+            this.adjMatrix = adjMatrix;
+        }
+
         public void AddEdge(int vertex1, int vertex2)
         {
-
+            adjMatrix[vertex1][vertex2] = true;
+            adjMatrix[vertex2][vertex1] = true;
         }
 
         public void RemoveEdge(int vertex1, int vertex2)
         {
-
+            adjMatrix[vertex1][vertex2] = false;
+            adjMatrix[vertex2][vertex1] = false;
         }
 
-        public void AddVertex()
+        public void AddVertex(double x, double y)
         {
-
+            Vertex[] temp = new Vertex[order + 1];
+            vertices.CopyTo(temp, 0);
+            vertices[order] = new Vertex(x, y);
+            vertices = temp;
+            order++;
         }
 
         public void RemoveVertex(int position)
         {
+            Vertex[] temp = new Vertex[order - 1];
+            int j = 0;
+            for (int i = 0; i < order; i++)
+            {
+                if (i == position)
+                {
+                    continue;
+                }
+                temp[j] = vertices[i];
+                j++;
+            }
+            order--;
+            vertices = temp;
+        }
 
+        public void MakePlanar()
+        {
+
+            for (int i = 0; i < order; i++)
+            {
+                Vertex vertex1 = vertices[i];
+                for (int j = 0; j < order; j++)
+                {
+                    if (i == j)
+                    {
+                        continue;
+                    }
+                    Vertex vertex2 = vertices[j];
+                    for (int k = 0; k < order; k++)
+                    {
+                        Vertex vertex3 = vertices[k];
+                        for (int l = 0; l < order; l++)
+                        {
+                            if (k == l)
+                            {
+                                continue;
+                            }
+                            Vertex vertex4 = vertices[l];
+                            double a = (vertex2.Y - vertex1.Y) / (double) (vertex2.X - vertex1.X);
+                            double b = vertex1.Y - a * vertex1.X;
+                            double c = (vertex4.Y - vertex3.Y) / (double)(vertex4.X - vertex3.X);
+                            double d = vertex3.Y - c * vertex3.X;
+                            double x = (d - b) / (a - c);
+                            if (x >= Math.Min(Math.Min(vertex1.X, vertex2.X), Math.Min(vertex3.X, vertex4.X)) && x <= Math.Max(Math.Max(vertex1.X, vertex2.X), Math.Max(vertex3.X, vertex4.X)))
+                            {
+                                adjMatrix[i][j] = false;
+                                adjMatrix[j][i] = false;
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+
+        public bool IsConnected()
+        {
+            List<int> usedVertices = new List<int>();
+            Stack<int> stack = new Stack<int>();
+            stack.Push(0);
+            while (stack.Count > 0)
+            {
+                int cur = stack.Pop();
+                if (!usedVertices.Contains(cur))
+                {
+                    usedVertices.Add(cur);
+                }
+                for (int i = 0; i < order; i++)
+                {
+                    if (adjMatrix[cur][i])
+                    {
+                        stack.Push(i);
+                    }
+                }
+            }
+            return usedVertices.Count == order;
         }
 
         public bool IsHamiltonian()
@@ -51,7 +148,19 @@ namespace GraphGenerator
 
         public bool IsEulerian()
         {
-            return false;
+            for (int i = 0; i < order; i++)
+            {
+                int degree = 0;
+                for (int j = 0; j < order; j++)
+                {
+                    degree += adjMatrix[i][j] ? 1 : 0;
+                }
+                if (degree % 2 == 1)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public bool IsIsomorphicTo(Graph g)
@@ -60,6 +169,10 @@ namespace GraphGenerator
         }
 
         public int Order { get => order; }
+
+        public Vertex[] Vertices { get => vertices; }
+        
+        public Boolean[][] AdjacencyMatrix { get => adjMatrix; }
 
     }
 }
