@@ -260,7 +260,7 @@ namespace GraphGenerator
             int[] degrees = new int[order];
             for (int i = 0; i < order; i++)
             {
-                degrees[i] = (int)(random.NextDouble() * (maxDegree / 2)) * 2;
+                degrees[i] = (int)(random.NextDouble() * 2 * (maxDegree / 2) + 2);
             }
             for (int i = 0; i < order; i++)
             {
