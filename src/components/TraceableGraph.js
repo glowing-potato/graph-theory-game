@@ -88,7 +88,7 @@ export default class TraceableGraph extends React.Component {
         if (this.state.drag) {
             const tip = this.state.history[this.state.history.length - 1].v;
             const e = this.props.edges.find(e2 => edgeVertMatch([ this.props.verts[e2[0]], this.props.verts[e2[1]] ], tip, v));
-            if (e) {
+            if (e && this.state.history.findIndex(h => h.e && edgeMatch(e, h.e)) < 0) {
                 this.setState({
                     "history": this.state.history.concat([ { "v": v, "e": e }]),
                     "drag": v
