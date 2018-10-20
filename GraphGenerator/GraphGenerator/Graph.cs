@@ -25,15 +25,15 @@ namespace GraphGenerator
 
         private int order;
         private Vertex[] vertices;
-        private bool[][] adjMatrix;
+        private bool[,] adjMatrix;
 
-        public Graph(int order, bool[][] adjMatrix)
+        public Graph(int order, bool[,] adjMatrix)
         {
             this.order = order;
             this.adjMatrix = adjMatrix;
         }
 
-        public Graph(int order, Vertex[] vertices, bool[][] adjMatrix)
+        public Graph(int order, Vertex[] vertices, bool[,] adjMatrix)
         {
             this.order = order;
             this.vertices = vertices;
@@ -42,14 +42,14 @@ namespace GraphGenerator
 
         public void AddEdge(int vertex1, int vertex2)
         {
-            adjMatrix[vertex1][vertex2] = true;
-            adjMatrix[vertex2][vertex1] = true;
+            adjMatrix[vertex1,vertex2] = true;
+            adjMatrix[vertex2,vertex1] = true;
         }
 
         public void RemoveEdge(int vertex1, int vertex2)
         {
-            adjMatrix[vertex1][vertex2] = false;
-            adjMatrix[vertex2][vertex1] = false;
+            adjMatrix[vertex1,vertex2] = false;
+            adjMatrix[vertex2,vertex1] = false;
         }
 
         public void AddVertex(double x, double y)
@@ -108,8 +108,8 @@ namespace GraphGenerator
                             double x = (d - b) / (a - c);
                             if (x >= Math.Min(Math.Min(vertex1.X, vertex2.X), Math.Min(vertex3.X, vertex4.X)) && x <= Math.Max(Math.Max(vertex1.X, vertex2.X), Math.Max(vertex3.X, vertex4.X)))
                             {
-                                adjMatrix[i][j] = false;
-                                adjMatrix[j][i] = false;
+                                adjMatrix[i,j] = false;
+                                adjMatrix[j,i] = false;
                             }
                         }
                     }
@@ -132,7 +132,7 @@ namespace GraphGenerator
                 }
                 for (int i = 0; i < order; i++)
                 {
-                    if (adjMatrix[cur][i])
+                    if (adjMatrix[cur,i])
                     {
                         stack.Push(i);
                     }
@@ -153,7 +153,7 @@ namespace GraphGenerator
                 int degree = 0;
                 for (int j = 0; j < order; j++)
                 {
-                    degree += adjMatrix[i][j] ? 1 : 0;
+                    degree += adjMatrix[i,j] ? 1 : 0;
                 }
                 if (degree % 2 == 1)
                 {
@@ -172,7 +172,7 @@ namespace GraphGenerator
 
         public Vertex[] Vertices { get => vertices; }
         
-        public Boolean[][] AdjacencyMatrix { get => adjMatrix; }
+        public bool[,] AdjacencyMatrix { get => adjMatrix; }
 
     }
 }
