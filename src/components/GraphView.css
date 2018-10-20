@@ -1,0 +1,26 @@
+.graph-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    color: #FFFFFF;
+    text-align: center;
+    background-color: #793CCC;
+}
+.graph-view * {
+    position: absolute;
+    background-color: #C497FF;
+}
+.graph-view .vert {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+.graph-view .edge {
+    width: 5px;
+    margin-left: -2.5px;
+    transform-origin: top center;
+}
