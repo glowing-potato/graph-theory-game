@@ -1,11 +1,14 @@
 import React from "react";
+import Game from "../components/Game";
+import Graph from "../components/Graph";
+import data from "./EulerWalk.json";
 
 export default class EulerCycle extends React.Component {
     render() {
         return (
-            <div>
-                Euler Cycle Problem #{this.props.match.params.level}
-            </div>
+            <Game>
+                <Graph verts={data[this.props.match.params.level - 1].v} edges={data[this.props.match.params.level - 1].e} />
+            </Game>
         );
     }
 }
