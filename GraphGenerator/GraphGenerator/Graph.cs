@@ -8,6 +8,9 @@ namespace GraphGenerator
 {
     public class Graph
     {
+
+        private static Random random = new Random();
+
         public class Vertex
         {
             private double x;
@@ -32,7 +35,6 @@ namespace GraphGenerator
             this.order = order;
             this.adjMatrix = adjMatrix;
             this.vertices = new Vertex[order];
-            Random random = new Random();
             for (int i = 0; i < order; i++)
             {
                 vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
