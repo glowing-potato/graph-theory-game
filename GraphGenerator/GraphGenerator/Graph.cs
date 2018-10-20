@@ -33,7 +33,7 @@ namespace GraphGenerator
         public Graph(int order)
         {
             this.order = order;
-            bool[,] adjMatrix = new bool[order, order];
+            adjMatrix = new bool[order, order];
             this.vertices = new Vertex[order];
             for (int i = 0; i < order; i++)
             {
