@@ -1,11 +1,12 @@
 import React from "react";
+import Game from "../components/Game";
 
 export default class HamiltonianCycle extends React.Component {
     render() {
         return (
-            <div>
+            <Game>
                 Hamiltonian Cycle Problem #{this.props.match.params.level}
-            </div>
+            </Game>
         );
     }
 }
