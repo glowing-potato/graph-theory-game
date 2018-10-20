@@ -52,6 +52,22 @@ namespace GraphGenerator
             adjMatrix[vertex2,vertex1] = false;
         }
 
+        public List<KeyValuePair<int, int>> GetEdges()
+        {
+            List<KeyValuePair<int, int>> list = new List<KeyValuePair<int, int>>();
+            for (int i = 0; i < order; i++)
+            {
+                for (int j = i + 1; j < order; j++)
+                {
+                    if (adjMatrix[i,j])
+                    {
+                        list.Add(new KeyValuePair<int, int>(i, j));
+                    }
+                }
+            }
+            return list;
+        }
+
         public void AddVertex(double x, double y)
         {
             Vertex[] temp = new Vertex[order + 1];
