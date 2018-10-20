@@ -1,0 +1,7 @@
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\bin\Debug\GraphGenerator.exe.config
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\bin\Debug\GraphGenerator.exe
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\bin\Debug\GraphGenerator.pdb
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.csprojAssemblyReference.cache
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.csproj.CoreCompileInputs.cache
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.exe
+C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.pdb
