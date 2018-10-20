@@ -5,3 +5,10 @@ C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerat
 C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.csproj.CoreCompileInputs.cache
 C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.exe
 C:\Users\Natha\source\repos\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.pdb
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.csprojAssemblyReference.cache
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.csproj.CoreCompileInputs.cache
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.exe
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\obj\Debug\GraphGenerator.pdb
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\bin\Debug\GraphGenerator.exe.config
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\bin\Debug\GraphGenerator.exe
+D:\GraphTheoryGame\graph-theory-game\GraphGenerator\GraphGenerator\bin\Debug\GraphGenerator.pdb

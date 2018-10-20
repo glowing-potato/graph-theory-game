@@ -31,6 +31,12 @@ namespace GraphGenerator
         {
             this.order = order;
             this.adjMatrix = adjMatrix;
+            this.vertices = new Vertex[order];
+            Random random = new Random();
+            for (int i = 0; i < order; i++)
+            {
+                vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
+            }
         }
 
         public Graph(int order, Vertex[] vertices, bool[,] adjMatrix)
@@ -180,6 +186,25 @@ namespace GraphGenerator
             return true;
         }
 
+        public bool HasEulerianPath()
+        {
+            int oddDegrees = 0;
+            for (int i = 0; i < order; i++)
+            {
+                int degree = 0;
+                for (int j = 0; j < order; j++)
+                {
+                    degree += adjMatrix[i, j] ? 1 : 0;
+                }
+                if (degree % 2 == 1)
+                {
+                    oddDegrees++;
+                    if (oddDegrees > 2) { return false; }
+                }
+            }
+            return true;
+        }
+            
         public bool IsIsomorphicTo(Graph g)
         {
             return false;
