@@ -8,60 +8,6 @@ using System.Threading.Tasks;
 
 namespace GraphGenerator
 {
-    // a matrix row
-    internal class Row
-    {
-        public List<int> items { get; } = new List<int>();
-        public Row(List<int> _items)
-        {
-            items = _items;
-        }
-        public void addItem(int item)
-        {
-            items.Add(item);
-        }
-    }
-
-    // a matrix
-    internal class Matrix
-    {
-        public List<Row> rows { get; } = new List<Row>();
-        public void addRow(Row row)
-        {
-            rows.Add(row);
-        }
-        public void reflectTopToBottom()
-        {
-            if(rows.Count == rows[0].items.Count)
-            {
-                for (int i = 0; i < rows.Count; i++)
-                {
-                    for (int j = 0; j < rows[i].items.Count; j++)
-                    {
-                        if (j > i)
-                        {
-                            rows[j].items[i] = rows[i].items[j];
-                        }
-                    }
-                }
-            }
-        }
-
-        // generates a list of strings or this matrix
-        public List<string> save()
-        {
-            List<string> lines = new List<string>();
-            for(int i = 0; i < rows.Count; i++)
-            {
-                lines.Add("");
-                for(int j = 0; j < rows[i].items.Count; j++)
-                {
-                    lines[i] += rows[i].items[j] + " ";
-                }
-            }
-            return lines;
-        }
-    }
 
     class GenerateAdgacencyMatricies
     {
@@ -69,40 +15,43 @@ namespace GraphGenerator
         {
             // outputs JSON objects representing graphs
             //  origionally generated as matricies
-            public static void ToJSON()
+            public static string ToJSON(Graph.Vertex[] vertecies, List<KeyValuePair<int, int>> edges)
             {
-
-            }
-            // outputs Zach's preferred output of lists
-            //  of verticies [(x, y)] and edges [(v, v)]
-            public static void ToVertEdge()
-            {
-
+                string result = "";
+                return result;
             }
         }
 
-        // takes in a list of lists of matrix rows and saves it to an html file
-        private void saveToHTML(List<List<string>> files, int size)
+        // reflects upper triangle of the matrix to the lower triangle.
+        private void reflectTopToBottom(ref bool[,] matrix, int order)
         {
-            int totalLines = 0;
-            foreach (List<string> file in files) totalLines += file.Count;
-            string[] lines = new string[totalLines + 1];
-            int i = 0;
-            lines[0] = "<code>";
-            foreach (List<string> file in files)
+            for (int i = 0; i < order; i++)
             {
-                lines[i] += "<br/><br/>";
-                foreach (string line in file)
+                for (int j = 0; j < order; j++)
                 {
-                    lines[i] += "<br/>";
-                    lines[i] += line;
-                    i++;
+                    if (j > i)
+                    {
+                        matrix[j, i] = matrix[i, j];
+                    }
                 }
             }
-            lines[i] = "</code>";
-            System.IO.File.WriteAllLines(@"C:/Users/Natha/Documents/Development"
-                        + "/HackKState/2018/graph-theory-game"
-                        + "/GraphGenerator/" + size + ".html", lines);
+        }
+
+        // generates the adjacency matrix for the specified order and id
+        private bool[,] numToAdjacencyMatrix(int order, int id)
+        {
+            bool[,] result = new bool[order, order];
+            for (int i = 0; i < order; i++)
+            {
+                bool[] row = new bool[order];
+                for (int j = i + 1; j < order; j++)
+                {
+                    result[i, j] = (1 == (id % 2));
+                    id /= 2;
+                }
+            }
+            reflectTopToBottom(ref result, order);
+            return result;
         }
 
         // counts the number of chs that show up in str
@@ -117,37 +66,25 @@ namespace GraphGenerator
         public void generateMatrixGraphsAsHTMLs(int min, int max)
         {
             int sum = 0;
-            for (int size = min; size <= max; size++)
+            if(min != 1) for(int i = 0; i < min; i++) sum += i;
+            for (int order = min; order <= max; order++)
             {
-                List<List<string>> files = new List<List<string>>();
-                for (int num = 0; num < Math.Pow(2, sum); num++)
+                for(int id = 0; id < Math.Pow(2, sum); id++)
                 {
-                    int bin = num;
-                    if (count(System.Convert.ToString(bin, 2), '1') > sum - size)
+                    if (count(System.Convert.ToString(id, 2), '1') > order - 2)
                     {
-                        Matrix matrix = new Matrix();
-                        for (int i = 0; i < size; i++)
+                        bool[,] matrix = numToAdjacencyMatrix(order, id);
+                        Graph graph = new Graph(order, matrix);
+                        if(graph.IsConnected())
                         {
-                            List<int> items = new List<int>();
-                            for (int j = 0; j < size; j++)
+                            if (graph.IsEulerian())
                             {
-                                if (j > i)
-                                {
-                                    items.Add(bin % 2);
-                                    bin /= 2;
-                                }
-                                else items.Add(0);
+                                string json = Convert.ToJSON(graph.Vertices, graph.GetEdges());
+                                //TODO OUTPUT AND IMPLEMENT ToJSON
                             }
-                            Row row = new Row(items);
-                            matrix.addRow(row);
                         }
-                        matrix.reflectTopToBottom();
-                        files.Add(matrix.save());
                     }
                 }
-                sum += size;
-                saveToHTML(files, size);
-                Console.WriteLine("FINISHED " + size);
             }
         }
 

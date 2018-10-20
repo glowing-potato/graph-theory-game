@@ -8,6 +8,9 @@ namespace GraphGenerator
 {
     public class Graph
     {
+
+        private static Random random = new Random();
+
         public class Vertex
         {
             private double x;
@@ -25,15 +28,31 @@ namespace GraphGenerator
 
         private int order;
         private Vertex[] vertices;
-        private bool[][] adjMatrix;
+        private bool[,] adjMatrix;
 
-        public Graph(int order, bool[][] adjMatrix)
+        public Graph(int order)
+        {
+            this.order = order;
+            bool[,] adjMatrix = new bool[order, order];
+            this.vertices = new Vertex[order];
+            for (int i = 0; i < order; i++)
+            {
+                vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
+            }
+        }
+
+        public Graph(int order, bool[,] adjMatrix)
         {
             this.order = order;
             this.adjMatrix = adjMatrix;
+            this.vertices = new Vertex[order];
+            for (int i = 0; i < order; i++)
+            {
+                vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
+            }
         }
 
-        public Graph(int order, Vertex[] vertices, bool[][] adjMatrix)
+        public Graph(int order, Vertex[] vertices, bool[,] adjMatrix)
         {
             this.order = order;
             this.vertices = vertices;
@@ -42,14 +61,30 @@ namespace GraphGenerator
 
         public void AddEdge(int vertex1, int vertex2)
         {
-            adjMatrix[vertex1][vertex2] = true;
-            adjMatrix[vertex2][vertex1] = true;
+            adjMatrix[vertex1,vertex2] = true;
+            adjMatrix[vertex2,vertex1] = true;
         }
 
         public void RemoveEdge(int vertex1, int vertex2)
         {
-            adjMatrix[vertex1][vertex2] = false;
-            adjMatrix[vertex2][vertex1] = false;
+            adjMatrix[vertex1,vertex2] = false;
+            adjMatrix[vertex2,vertex1] = false;
+        }
+
+        public List<KeyValuePair<int, int>> GetEdges()
+        {
+            List<KeyValuePair<int, int>> list = new List<KeyValuePair<int, int>>();
+            for (int i = 0; i < order; i++)
+            {
+                for (int j = i + 1; j < order; j++)
+                {
+                    if (adjMatrix[i,j])
+                    {
+                        list.Add(new KeyValuePair<int, int>(i, j));
+                    }
+                }
+            }
+            return list;
         }
 
         public void AddVertex(double x, double y)
@@ -76,6 +111,16 @@ namespace GraphGenerator
             }
             order--;
             vertices = temp;
+        }
+
+        public int VertexDegree(int vertex)
+        {
+            int degree = 0;
+            for (int i = 0; i < order; i++)
+            {
+                degree += adjMatrix[vertex,i] ? 1 : 0;
+            }
+            return degree;
         }
 
         public void MakePlanar()
@@ -108,8 +153,8 @@ namespace GraphGenerator
                             double x = (d - b) / (a - c);
                             if (x >= Math.Min(Math.Min(vertex1.X, vertex2.X), Math.Min(vertex3.X, vertex4.X)) && x <= Math.Max(Math.Max(vertex1.X, vertex2.X), Math.Max(vertex3.X, vertex4.X)))
                             {
-                                adjMatrix[i][j] = false;
-                                adjMatrix[j][i] = false;
+                                adjMatrix[i,j] = false;
+                                adjMatrix[j,i] = false;
                             }
                         }
                     }
@@ -129,14 +174,15 @@ namespace GraphGenerator
                 if (!usedVertices.Contains(cur))
                 {
                     usedVertices.Add(cur);
-                }
-                for (int i = 0; i < order; i++)
-                {
-                    if (adjMatrix[cur][i])
+                    for (int i = 0; i < order; i++)
                     {
-                        stack.Push(i);
+                        if (adjMatrix[cur, i])
+                        {
+                            stack.Push(i);
+                        }
                     }
                 }
+                
             }
             return usedVertices.Count == order;
         }
@@ -153,7 +199,7 @@ namespace GraphGenerator
                 int degree = 0;
                 for (int j = 0; j < order; j++)
                 {
-                    degree += adjMatrix[i][j] ? 1 : 0;
+                    degree += adjMatrix[i,j] ? 1 : 0;
                 }
                 if (degree % 2 == 1)
                 {
@@ -163,16 +209,78 @@ namespace GraphGenerator
             return true;
         }
 
+        public bool HasEulerianPath()
+        {
+            int oddDegrees = 0;
+            for (int i = 0; i < order; i++)
+            {
+                int degree = 0;
+                for (int j = 0; j < order; j++)
+                {
+                    degree += adjMatrix[i, j] ? 1 : 0;
+                }
+                if (degree % 2 == 1)
+                {
+                    oddDegrees++;
+                    if (oddDegrees > 2) { return false; }
+                }
+            }
+            return true;
+        }
+            
         public bool IsIsomorphicTo(Graph g)
         {
             return false;
+        }
+
+        public void SpreadVertices(int iterations, double wallForce, double vertexForce)
+        {
+            for (int itr = 0; itr < iterations; itr++)
+            {
+                for (int i = 0; i < order; i++)
+                {
+                    double forceX = 0;
+                    double forceY = 0;
+                    for (int j = 0; j < order; j++)
+                    {
+                        double force = vertexForce / (Math.Pow(vertices[j].X - vertices[i].X, 2) + Math.Pow(vertices[j].Y - vertices[i].Y, 2));
+                        double angle = Math.Atan2(vertices[j].Y - vertices[i].Y, vertices[j].X - vertices[i].X);
+                        forceX += Math.Cos(angle) * force;
+                        forceY += Math.Sin(angle) * force;
+                    }
+                    forceX += Math.Pow(vertices[i].X - 0.5, 2) * wallForce;
+                    forceY += Math.Pow(vertices[i].Y - 0.5, 2) * wallForce;
+                }
+            }
+        }
+
+        public static Graph GenerateEulerianGraph(int order, Random random, int maxDegree)
+        {
+            Graph g = new Graph(order);
+            int[] degrees = new int[order];
+            for (int i = 0; i < order; i++)
+            {
+                degrees[i] = (int)(random.NextDouble() * 2 * (maxDegree / 2) + 2);
+            }
+            for (int i = 0; i < order; i++)
+            {
+                while (g.VertexDegree(i) < degrees[i])
+                {
+                    int vertex2 = (int)(random.NextDouble() * order);
+                    if (g.VertexDegree(vertex2) < degrees[vertex2])
+                    {
+                        g.AddEdge(i, vertex2);
+                    }
+                }
+            }
+            return g;
         }
 
         public int Order { get => order; }
 
         public Vertex[] Vertices { get => vertices; }
         
-        public Boolean[][] AdjacencyMatrix { get => adjMatrix; }
+        public bool[,] AdjacencyMatrix { get => adjMatrix; }
 
     }
 }
