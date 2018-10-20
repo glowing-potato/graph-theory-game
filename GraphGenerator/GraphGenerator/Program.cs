@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,26 +15,53 @@ namespace GraphGenerator
         {
             // outputs JSON objects representing graphs
             //  origionally generated as matricies
-            public static string ToJSON(Graph.Vertex[] vertecies, List<KeyValuePair<int, int>> edges)
+            public static string ToJSON(Graph graph)
             {
-                string result = "";
-                return result;
+                Graph.Vertex[] vertices = graph.Vertices;
+                List<KeyValuePair<int, int>> edges = graph.GetEdges();
+                if (vertices != null && edges != null)
+                {
+                    string result = "{";
+                    result += "\"v\":[";
+                    double x = 0;
+                    double y = 0;
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        x = ((int)(vertices[i].Y * 1000)) / 1000.0;
+                        y = ((int)(vertices[i].X * 1000)) / 1000.0;
+                        result += "[" + x + ",";
+                        result += y + "]";
+                        if (i != vertices.Length - 1) result += ",";
+                    }
+                    result += "]";
+                    if(edges.Count != 0)
+                    {
+                        result += ",\"e\":[";
+                        int e1 = 0;
+                        int e2 = 0;
+                        for (int i = 0; i < edges.Count; i++)
+                        {
+                            e1 = edges[i].Key;
+                            e2 = edges[i].Value;
+                            result += "[" + e1 + ",";
+                            result += e2 + "]";
+                            if (i != edges.Count - 1) result += ",";
+                        }
+                        result += "]}";
+                        Console.WriteLine(result);
+                        return result;
+                    }
+                    return "";
+                }
+                return "";
             }
         }
 
         // reflects upper triangle of the matrix to the lower triangle.
         private void reflectTopToBottom(ref bool[,] matrix, int order)
         {
-            for (int i = 0; i < order; i++)
-            {
-                for (int j = 0; j < order; j++)
-                {
-                    if (j > i)
-                    {
-                        matrix[j, i] = matrix[i, j];
-                    }
-                }
-            }
+            for (int i = 0; i < order; i++) for (int j = 0; j < order; j++)
+                    if (j > i) matrix[j, i] = matrix[i, j];
         }
 
         // generates the adjacency matrix for the specified order and id
@@ -63,8 +90,10 @@ namespace GraphGenerator
         }
 
         // generates all possible graphs as matricieswith a size anywhere between min and max verticies
-        public void generateMatrixGraphsAsHTMLs(int min, int max)
+        public void generateGraphsForLevels(int min, int max)
         {
+            List<string> oilyGraphs = new List<string>();
+            int oilyIndex = 0;
             int sum = 0;
             if(min != 1) for(int i = 0; i < min; i++) sum += i;
             for (int order = min; order <= max; order++)
@@ -77,21 +106,45 @@ namespace GraphGenerator
                         Graph graph = new Graph(order, matrix);
                         if(graph.IsConnected())
                         {
-                            if (graph.IsEulerian())
+                            bool isOily = graph.HasEulerianPath();
+                            //bool isHammy = graph.IsHamiltonian();
+                            if (isOily)
                             {
-                                string json = Convert.ToJSON(graph.Vertices, graph.GetEdges());
-                                //TODO OUTPUT AND IMPLEMENT ToJSON
+                                string json = Convert.ToJSON(graph);
+                                oilyGraphs.Add(json);
+                                if(oilyGraphs.Count > 100)
+                                {
+                                    string[] lines = new string[oilyGraphs.Count + 2];
+                                    lines[0] = "[";
+                                    for(int i = 1; i < oilyGraphs.Count + 1; i++)
+                                    {
+                                        lines[i] = oilyGraphs[i - 1];
+                                        lines[i] += (i < oilyGraphs.Count - 1) ? "," : "";
+                                    }
+                                    lines[lines.Length - 1] = "]";
+                                    System.IO.File.WriteAllLines(@"C:/Users/Natha/Documents/Development"
+                                        + "/HackKState/2018/graph-theory-game"
+                                        + "/GraphGenerator/jsonEuler" + oilyIndex + ".json", lines);
+                                    oilyGraphs = new List<string>();
+                                    oilyIndex++;
+                                }
                             }
                         }
                     }
                 }
+                sum += order;
+                Console.WriteLine(order + "");
             }
         }
 
         // constructor
         public GenerateAdgacencyMatricies()
         {
-            generateMatrixGraphsAsHTMLs(1, 7);
+            //generateGraphsForLevels(1,20);
+            Random random = new Random();
+            Graph graph = Graph.GenerateEulerianGraph((int)(random.NextDouble() * 20), random, 7);
+            graph.SpreadVertices(10, 0.5, 0.1);
+            Console.WriteLine(Convert.ToJSON(graph));
         }
     }
 
