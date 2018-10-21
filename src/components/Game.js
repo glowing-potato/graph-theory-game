@@ -1,12 +1,12 @@
 import React from "react";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { Route, Link } from "react-router-dom";
 import "./Game.css";
 
 class NextLink extends React.Component {
     render() {
         if (this.props.match.params.number >= this.props.levels) {
             return (
-                <Link to={`/${this.props.match.params.type}`}>Next Group</Link>
+                <Link to="/levels">Next Group</Link>
             );
         } else {
             return (
@@ -43,8 +43,7 @@ export default class Game extends React.Component {
         return (
             <div className="game">
             <Link className="back-button"
-                to={"/" + window.location.href.split("/")[window.location.href.split("/").length - 2]}>
-                {"◀ Back"}</Link>
+                to={"/" + window.location.href.split("/")[window.location.href.split("/").length - 2]}>&#9664; Back</Link>
                 {this.props.children}
                 {this.props.won && (
                     <div className="winning">
