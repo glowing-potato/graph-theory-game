@@ -344,7 +344,24 @@ namespace GraphGenerator
             return g;
         }
 
-        public static Graph GenerateHamiltonianGraph(int order, Random random, int minExtra)
+        public static Graph GenerateHamiltonianCycleGraph(int order, Random random, int minExtra)
+        {
+            Graph g = GenerateCycleGraph(order);
+            for (int i = 0; i < Math.Max(minExtra, random.Next() % order); i++)
+            {
+                int a = 0, b = 0;
+                while (a == b)
+                {
+                    a = random.Next() % order;
+                    b = random.Next() % order;
+                }
+                g.AddEdge(a, b);
+
+            }
+            return g;
+        }
+
+        public static Graph GenerateHamiltonianPathGraph(int order, Random random, int minExtra)
         {
             Graph g = new Graph(order);
             for (int i = 0; i < order; i++)
@@ -365,7 +382,7 @@ namespace GraphGenerator
             return g;
         }
 
-        public static Graph GenerateEulerianGraph(int order, Random random, int maxcycle)
+        public static Graph GenerateEulerianTrailGraph(int order, Random random, int maxcycle)
         {
             List<Graph> cycles = new List<Graph>();
             int total = 0;
@@ -379,6 +396,21 @@ namespace GraphGenerator
             for (int i = 1; i < cycles.Count; i++)
             {
                 g.MergeGraphs(cycles[i], random.Next() % g.Order, random.Next() % cycles[i].Order);
+            }
+            return g;
+        }
+
+        public static Graph GenerateEulerianCircuitGraph(int order, Random random, int maxcycle)
+        {
+            Graph g = GenerateEulerianTrailGraph(order, random, maxcycle);
+            Vertex[] oddDegrees = null;
+            while (oddDegrees == null || oddDegrees.Count() > 0)
+            {
+                oddDegrees = g.Vertices.Where((z) => z.Degree % 2 == 1).ToArray();
+                for (int i = 0; i < oddDegrees.Length; i += 2)
+                {
+                    g.AddEdge(g.IndexOfVertex(oddDegrees[i]), g.IndexOfVertex(oddDegrees[i + 1]));
+                }
             }
             return g;
         }
