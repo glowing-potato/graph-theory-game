@@ -21,7 +21,7 @@ namespace GraphGenerator
                 }
                 return g;
             });
-            GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/GraphGenerator/eulerian_trails.json", (random, i) => Graph.GenerateEulerianTrailGraph(i / 5 + 5, random, (i + 3) / 5 + 3));
+            GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/GraphGenerator/eulerian_circuits.json", (random, i) => Graph.GenerateEulerianCircuitGraph(i / 5 + 5, random, (i + 3) / 5 + 3));
             GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/GraphGenerator/hamiltonian_paths.json", (random, i) => Graph.GenerateHamiltonianPathGraph(i / 5 + 5, random, (i + 3) / 5));
             GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/GraphGenerator/hamiltonian_cycles.json", (random, i) => Graph.GenerateHamiltonianCycleGraph(i / 5 + 5, random, (i + 3) / 5));
         }

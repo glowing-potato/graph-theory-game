@@ -403,15 +403,12 @@ namespace GraphGenerator
         public static Graph GenerateEulerianCircuitGraph(int order, Random random, int maxcycle)
         {
             Graph g = GenerateEulerianTrailGraph(order, random, maxcycle);
-            Vertex[] oddDegrees = null;
-            while (oddDegrees == null || oddDegrees.Count() > 0)
+            Vertex[] oddDegrees = g.Vertices.Where((z) => z.Degree % 2 == 1).ToArray();
+            for (int i = 0; i < oddDegrees.Length; i += 2)
             {
-                oddDegrees = g.Vertices.Where((z) => z.Degree % 2 == 1).ToArray();
-                for (int i = 0; i < oddDegrees.Length; i += 2)
-                {
-                    g.AddEdge(g.IndexOfVertex(oddDegrees[i]), g.IndexOfVertex(oddDegrees[i + 1]));
-                }
+                g.AddEdge(g.IndexOfVertex(oddDegrees[i]), g.IndexOfVertex(oddDegrees[i + 1]));
             }
+            
             return g;
         }
 
