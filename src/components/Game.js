@@ -69,7 +69,6 @@ export default class Game extends React.Component {
                         <div className="padding" />
                     </div>
                 )}
-                <div className="clear-button" onClick={this.reload}>{"Clear"}</div>
             </div>
         );
     }

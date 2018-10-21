@@ -42,23 +42,6 @@
 .game .winning a:hover, .game .winning a:active {
     background-color: rgba(255, 255, 255, 0.7);
 }
-
-.game .clear-button {
-    cursor: pointer;
-    position: absolute;
-    background-color: #00FAFA;
-    display: flex;
-    width: 40px;
-    height: auto;
-    border-radius: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    float: right;
-    bottom: 0;
-    right: 0;
-    z-index: 2;
-}
-
 .game .back-button {
     cursor: pointer;
     position: absolute;
@@ -75,7 +58,6 @@
     left: 0;
     z-index: 2;
 }
-
 .game .replay-button {
     cursor: pointer;
 }
