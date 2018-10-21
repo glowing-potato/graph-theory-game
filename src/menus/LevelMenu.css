@@ -23,22 +23,24 @@
 .level-menu > a {
     text-decoration: none;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.75);
     color: #5002E8;
     font-size: 1.5em;
 }
 .level-menu > a:hover, .level-menu > a:active {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 1.0);
 }
 .level-menu ul {
     list-style-type: none;
     padding: 0;
     padding-bottom: 10px;
+    padding-left: 10px;
+    transform: translate(2.5%, 0);
 }
 .level-menu li {
     padding: 20px;
     margin: 10px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.75);
     width: 50px;
     height: 50px;
     line-height: 50px;
@@ -46,7 +48,7 @@
     float: left;
 }
 .level-menu > * li:hover, .level-menu > * li:active {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 1.0);
 }
 .level-menu > * a {
     text-decoration: none;

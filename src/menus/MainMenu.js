@@ -7,7 +7,7 @@ export default class MainMenu extends React.Component {
     render() {
         return (
             <div className="main-menu">
-                <h1>Graph Theory Game</h1>
+                <h1>Blep-Blap</h1>
                 <div className="menu">
                     <div className="padding" />
                     <ul>

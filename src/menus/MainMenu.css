@@ -33,10 +33,10 @@
 .main-menu li {
     padding: 20px;
     margin: 10px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.75);
 }
 .main-menu li:hover, .main-menu li:active {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 1.0);
 }
 .main-menu a {
     text-decoration: none;
