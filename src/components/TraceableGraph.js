@@ -36,10 +36,14 @@ export default class TraceableGraph extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.verts !== this.props.verts || prevProps.edges !== this.props.edges) {
+        if (prevProps.verts !== this.props.verts || prevProps.edges !== this.props.edges || prevProps.nonce !== this.props.nonce) {
             this.setState({
                 "history": [],
                 "drag": null
+            }, () => {
+                if (this.props.onGraphChange) {
+                    this.props.onGraphChange(this.state.history);
+                }
             });
         }
     }
@@ -49,6 +53,10 @@ export default class TraceableGraph extends React.Component {
             this.setState({
                 "history": [ { "v": v } ],
                 "drag": v
+            }, () => {
+                if (this.props.onGraphChange) {
+                    this.props.onGraphChange(this.state.history);
+                }
             });
         } else {
             let i;
@@ -61,6 +69,10 @@ export default class TraceableGraph extends React.Component {
                 this.setState({
                     "history": this.state.history.slice(0, i + 1),
                     "drag": v
+                }, () => {
+                    if (this.props.onGraphChange) {
+                        this.props.onGraphChange(this.state.history);
+                    }
                 });
             }
         }
@@ -92,6 +104,10 @@ export default class TraceableGraph extends React.Component {
                 this.setState({
                     "history": this.state.history.concat([ { "v": v, "e": e }]),
                     "drag": v
+                }, () => {
+                    if (this.props.onGraphChange) {
+                        this.props.onGraphChange(this.state.history);
+                    }
                 });
             }
         }

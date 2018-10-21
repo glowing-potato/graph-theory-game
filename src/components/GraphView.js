@@ -33,7 +33,9 @@ export default class GraphView extends React.Component {
 
     handleRef(el) {
         this.view = el;
-        this.handleResize();
+        if (this.view) {
+            this.handleResize();
+        }
     }
 
     handleDrag(ev) {
