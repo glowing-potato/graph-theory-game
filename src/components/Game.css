@@ -64,8 +64,8 @@
     position: absolute;
     background-color: #00FAFA;
     display: flex;
-    width: 70px;
-    text-align: center;
+    width: 60px;
+    text-align: right;
     height: auto;
     border-radius: 10px;
     margin-left: 10px;
@@ -74,4 +74,8 @@
     top: 0;
     left: 0;
     z-index: 2;
+}
+
+.game .replay-button {
+    cursor: pointer;
 }

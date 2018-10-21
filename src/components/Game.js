@@ -44,7 +44,7 @@ export default class Game extends React.Component {
             <div className="game">
             <Link className="back-button"
                 to={"/" + window.location.href.split("/")[window.location.href.split("/").length - 2]}>
-                {"<- Back"}</Link>
+                {"◀ Back"}</Link>
                 {this.props.children}
                 {this.props.won && (
                     <div className="winning">
@@ -58,7 +58,7 @@ export default class Game extends React.Component {
                                         <Link to="/">Home</Link>
                                     </li>
                                     <li>
-                                        <a onClick={this.reload}>Replay</a>
+                                        <a className="replay-button" onClick={this.reload}>Replay</a>
                                     </li>
                                     <li>
                                         <Route path="/:type/:number" render={(props) => <NextLink onClick={this.reload} levels={this.props.levels} {...props} />} />
