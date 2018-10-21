@@ -1,26 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import LevelData from "./LevelData";
 import background from "./background.svg";
 import "./LevelMenu.css";
 
-const levels = [];
-for (let i = 1; i <= 50; ++i) {
-    levels.push(i);
-}
-
 export default class LevelMenu extends React.Component {
     render() {
+        let levels = [];
+        const data = LevelData.find(d => d.id === this.props.match.params.type);
+        for (let i = 1; i <= data.levels; ++i) {
+            levels.push((
+                <li key={i}>
+                    <Link to={`/${this.props.match.params.type}/${i}`}>{i}</Link>
+                </li>
+            ))
+        }
         return (
             <div className="level-menu">
                 <h1>Select Level</h1>
                 <main>
                     <div className="padding" />
                     <ul>
-                        {levels.map((level, i) => (
-                            <li key={i}>
-                                <Link to={`/${this.props.match.params.type}/${level}`}>{level}</Link>
-                            </li>
-                        ))}
+                        {levels}
                     </ul>
                     <div className="padding" />
                 </main>
