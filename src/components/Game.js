@@ -29,9 +29,16 @@ export default class Game extends React.Component {
         });
     }
 
+    back() {
+        console.log();
+    }
+
     render() {
         return (
             <div className="game">
+            <Link className="back-button"
+                to={"/" + window.location.href.split("/")[window.location.href.split("/").length - 2]}>
+                {"<- Back"}</Link>
                 {this.props.children}
                 {this.props.won && (
                     <div className="winning">
@@ -59,6 +66,7 @@ export default class Game extends React.Component {
                         <div className="padding" />
                     </div>
                 )}
+                <div className="clear-button" onClick={this.reload}>{"Clear"}</div>
             </div>
         );
     }
