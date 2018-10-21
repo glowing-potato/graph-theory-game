@@ -21,7 +21,15 @@ namespace GraphGenerator
                 }
                 return g;
             });
-            GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/src/games/EulerCycle.json", (random, i) => Graph.GenerateEulerianCircuitGraph(i / 5 + 5, random, (i + 3) / 5 + 3));
+            GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/src/games/EulerCycle.json", (random, i) => 
+            {
+                Graph g = null;
+                while (g == null || !g.IsEulerian())
+                {
+                    g = Graph.GenerateEulerianCircuitGraph(i / 5 + 5, random, (i + 3) / 5 + 3);
+                }
+                return g;
+            });
             GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/src/games/HamiltonPath.json", (random, i) => Graph.GenerateHamiltonianPathGraph(i / 5 + 5, random, (i + 3) / 5));
             GenerateGraphs("D:/GraphTheoryGame/graph-theory-game/src/games/HamiltonCircuit.json", (random, i) => Graph.GenerateHamiltonianCycleGraph(i / 5 + 5, random, (i + 3) / 5));
         }
