@@ -9,76 +9,77 @@ namespace GraphGenerator
     public class Graph
     {
 
-        private static Random random = new Random();
-
         public class Vertex
         {
-            private double x;
-            private double y;
 
-            public Vertex(double x, double y)
+            public Vertex(double x, double y, Graph parent)
             {
-                this.x = x;
-                this.y = y;
+                X = x;
+                Y = y;
+                Parent = parent;
             }
 
-            public double X { get => x; set => x = value; }
-            public double Y { get => y; set => y = value; }
-        }
+            public double X { get; set; }
 
-        private int order;
-        private Vertex[] vertices;
-        private bool[,] adjMatrix;
+            public double Y { get; set; }
+
+            private Graph Parent { get; set; }
+
+            public int Degree
+            {
+                get
+                {
+                    int degree = 0;
+                    for (int i = 0; i < Parent.Order; i++) {
+                        degree += Parent.AdjacencyMatrix[Parent.IndexOfVertex(this), i] ? 1 : 0;
+                    }
+                    return degree;
+                }
+            }
+        }
 
         public Graph(int order)
         {
-            this.order = order;
-            adjMatrix = new bool[order, order];
-            this.vertices = new Vertex[order];
-            for (int i = 0; i < order; i++)
+            Order = order;
+            AdjacencyMatrix = new bool[Order, Order];
+            Vertices = new Vertex[Order];
+            for (int i = 0; i < Order; i++)
             {
-                vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
+                Vertices[i] = new Vertex(0.5, 0.5, this);
             }
         }
 
         public Graph(int order, bool[,] adjMatrix)
         {
-            this.order = order;
-            this.adjMatrix = adjMatrix;
-            this.vertices = new Vertex[order];
-            for (int i = 0; i < order; i++)
+            Order = order;
+            AdjacencyMatrix = adjMatrix;
+            Vertices = new Vertex[Order];
+            for (int i = 0; i < Order; i++)
             {
-                vertices[i] = new Vertex(random.NextDouble(), random.NextDouble());
+                Vertices[i] = new Vertex(0.5, 0.5, this);
             }
-        }
-
-        public Graph(int order, Vertex[] vertices, bool[,] adjMatrix)
-        {
-            this.order = order;
-            this.vertices = vertices;
-            this.adjMatrix = adjMatrix;
         }
 
         public void AddEdge(int vertex1, int vertex2)
         {
-            adjMatrix[vertex1,vertex2] = true;
-            adjMatrix[vertex2,vertex1] = true;
+            AdjacencyMatrix[vertex1,vertex2] = true;
+            AdjacencyMatrix[vertex2,vertex1] = true;
         }
 
         public void RemoveEdge(int vertex1, int vertex2)
         {
-            adjMatrix[vertex1,vertex2] = false;
-            adjMatrix[vertex2,vertex1] = false;
+            AdjacencyMatrix[vertex1,vertex2] = false;
+            AdjacencyMatrix[vertex2,vertex1] = false;
         }
 
         public List<KeyValuePair<int, int>> GetEdges()
         {
             List<KeyValuePair<int, int>> list = new List<KeyValuePair<int, int>>();
-            for (int i = 0; i < order; i++)
+            for (int i = 0; i < Order; i++)
             {
-                for (int j = i + 1; j < order; j++)
+                for (int j = i + 1; j < Order; j++)
                 {
-                    if (adjMatrix[i,j])
+                    if (AdjacencyMatrix[i,j])
                     {
                         list.Add(new KeyValuePair<int, int>(i, j));
                     }
@@ -87,65 +88,101 @@ namespace GraphGenerator
             return list;
         }
 
+        public Vertex GetVertex(int vertex)
+        {
+            return Vertices[vertex];
+        }
+
+        public int IndexOfVertex(Vertex vertex)
+        {
+            for (int i = 0; i < Order; i++)
+            {
+                if (vertex == Vertices[i])
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public void AddVertex(double x, double y)
         {
-            Vertex[] temp = new Vertex[order + 1];
-            vertices.CopyTo(temp, 0);
-            vertices[order] = new Vertex(x, y);
-            vertices = temp;
-            order++;
+            Vertex[] temp = new Vertex[Order + 1];
+            Vertices.CopyTo(temp, 0);
+            temp[Order] = new Vertex(x, y, this);
+            Vertices = temp;
+            bool[,] adjMatrix = new bool[Order + 1, Order + 1];
+            for (int i = 0; i < Order; i++)
+            {
+                for (int j = 0; j < Order; j++)
+                {
+                    adjMatrix[i, j] = AdjacencyMatrix[i, j];
+                }
+            }
+            AdjacencyMatrix = adjMatrix;
+            Order++;
         }
 
         public void RemoveVertex(int position)
         {
-            Vertex[] temp = new Vertex[order - 1];
+            Vertex[] temp = new Vertex[Order - 1];
             int j = 0;
-            for (int i = 0; i < order; i++)
+            for (int i = 0; i < Order; i++)
             {
                 if (i == position)
                 {
                     continue;
                 }
-                temp[j] = vertices[i];
+                temp[j] = Vertices[i];
                 j++;
             }
-            order--;
-            vertices = temp;
-        }
-
-        public int VertexDegree(int vertex)
-        {
-            int degree = 0;
-            for (int i = 0; i < order; i++)
+            Order--;
+            Vertices = temp;
+            /*bool[,] adjMatrix = new bool[Order - 1, Order - 1];
+            int k = 0;
+            int l = 0;
+            for (int i = 0; i < Order; i++)
             {
-                degree += adjMatrix[vertex,i] ? 1 : 0;
-            }
-            return degree;
+                if (i == position)
+                {
+                    continue;
+                }
+                for (int j = 0; j < Order; j++)
+                {
+                    if (j == position)
+                    {
+                        continue;
+                    }
+                    temp[j] = Vertices[i];
+                    j++;
+                }
+                i++;
+            }*/
         }
 
         public void MakePlanar()
         {
 
-            for (int i = 0; i < order; i++)
+            for (int i = 0; i < Order; i++)
             {
-                Vertex vertex1 = vertices[i];
-                for (int j = 0; j < order; j++)
+                Vertex vertex1 = Vertices[i];
+                for (int j = 0; j < Order; j++)
                 {
                     if (i == j)
                     {
                         continue;
                     }
-                    Vertex vertex2 = vertices[j];
-                    for (int k = 0; k < order; k++)
+                    Vertex vertex2 = Vertices[j];
+                    for (int k = 0; k < Order; k++)
                     {
-                        Vertex vertex3 = vertices[k];
-                        for (int l = 0; l < order; l++)
+                        Vertex vertex3 = Vertices[k];
+                        for (int l = 0; l < Order; l++)
                         {
                             if (k == l)
                             {
                                 continue;
                             }
-                            Vertex vertex4 = vertices[l];
+                            Vertex vertex4 = Vertices[l];
                             double a = (vertex2.Y - vertex1.Y) / (double) (vertex2.X - vertex1.X);
                             double b = vertex1.Y - a * vertex1.X;
                             double c = (vertex4.Y - vertex3.Y) / (double)(vertex4.X - vertex3.X);
@@ -153,8 +190,8 @@ namespace GraphGenerator
                             double x = (d - b) / (a - c);
                             if (x >= Math.Min(Math.Min(vertex1.X, vertex2.X), Math.Min(vertex3.X, vertex4.X)) && x <= Math.Max(Math.Max(vertex1.X, vertex2.X), Math.Max(vertex3.X, vertex4.X)))
                             {
-                                adjMatrix[i,j] = false;
-                                adjMatrix[j,i] = false;
+                                AdjacencyMatrix[i,j] = false;
+                                AdjacencyMatrix[j,i] = false;
                             }
                         }
                     }
@@ -174,9 +211,9 @@ namespace GraphGenerator
                 if (!usedVertices.Contains(cur))
                 {
                     usedVertices.Add(cur);
-                    for (int i = 0; i < order; i++)
+                    for (int i = 0; i < Order; i++)
                     {
-                        if (adjMatrix[cur, i])
+                        if (AdjacencyMatrix[cur, i])
                         {
                             stack.Push(i);
                         }
@@ -184,7 +221,7 @@ namespace GraphGenerator
                 }
                 
             }
-            return usedVertices.Count == order;
+            return usedVertices.Count == Order;
         }
 
         public bool IsHamiltonian()
@@ -194,12 +231,12 @@ namespace GraphGenerator
 
         public bool IsEulerian()
         {
-            for (int i = 0; i < order; i++)
+            for (int i = 0; i < Order; i++)
             {
                 int degree = 0;
-                for (int j = 0; j < order; j++)
+                for (int j = 0; j < Order; j++)
                 {
-                    degree += adjMatrix[i,j] ? 1 : 0;
+                    degree += AdjacencyMatrix[i,j] ? 1 : 0;
                 }
                 if (degree % 2 == 1)
                 {
@@ -212,12 +249,12 @@ namespace GraphGenerator
         public bool HasEulerianPath()
         {
             int oddDegrees = 0;
-            for (int i = 0; i < order; i++)
+            for (int i = 0; i < Order; i++)
             {
                 int degree = 0;
-                for (int j = 0; j < order; j++)
+                for (int j = 0; j < Order; j++)
                 {
-                    degree += adjMatrix[i, j] ? 1 : 0;
+                    degree += AdjacencyMatrix[i, j] ? 1 : 0;
                 }
                 if (degree % 2 == 1)
                 {
@@ -233,54 +270,169 @@ namespace GraphGenerator
             return false;
         }
 
-        public void SpreadVertices(int iterations, double wallForce, double vertexForce)
+        public void MergeGraphs(Graph g, int thisVertex, int gVertex)
+        {
+            int oldOrder = Order;
+            foreach (Vertex v in g.Vertices)
+            {
+                AddVertex(v.X, v.Y);
+            }
+            foreach (KeyValuePair<int, int> edge in g.GetEdges())
+            {
+                AddEdge(oldOrder + edge.Key, oldOrder + edge.Value);
+            }
+            AddEdge(thisVertex, oldOrder + gVertex);
+        }
+
+        public void SpreadVertices(int iterations, Random random, double targetEdgeLength, double multiplier, bool sigmoid, double jitter)
         {
             for (int itr = 0; itr < iterations; itr++)
             {
-                for (int i = 0; i < order; i++)
+                for (int i = 0; i < Order; i++)
                 {
-                    double forceX = 0;
-                    double forceY = 0;
-                    for (int j = 0; j < order; j++)
+                    for (int j = 0; j < Order; j++)
                     {
-                        double force = vertexForce / (Math.Pow(vertices[j].X - vertices[i].X, 2) + Math.Pow(vertices[j].Y - vertices[i].Y, 2));
-                        double angle = Math.Atan2(vertices[j].Y - vertices[i].Y, vertices[j].X - vertices[i].X);
-                        forceX += Math.Cos(angle) * force;
-                        forceY += Math.Sin(angle) * force;
+                        if (j == i)
+                        {
+                            continue;
+                        }
+                        double length = Math.Sqrt(Math.Pow(Vertices[j].X - Vertices[i].X, 2) + Math.Pow(Vertices[j].Y - Vertices[i].Y, 2));
+                        double force = ((length / targetEdgeLength) - 1) * multiplier;
+                        double angle = Math.Atan2(Vertices[j].Y - Vertices[i].Y, Vertices[j].X - Vertices[i].X);
+                        Vertices[i].X += Math.Cos(angle) * force + random.NextDouble() * jitter;
+                        Vertices[i].Y += Math.Sin(angle) * force + random.NextDouble() * jitter;
+                        Vertices[j].X -= Math.Cos(angle) * force + random.NextDouble() * jitter;
+                        Vertices[j].Y -= Math.Sin(angle) * force + random.NextDouble() * jitter;
                     }
-                    forceX += Math.Pow(vertices[i].X - 0.5, 2) * wallForce;
-                    forceY += Math.Pow(vertices[i].Y - 0.5, 2) * wallForce;
                 }
+            }
+            for (int i = 0; sigmoid && i < Order; i++)
+            {
+                Vertices[i].X = (Math.Tanh(Vertices[i].X - 0.5) + 1) / 2.0;
+                Vertices[i].Y = (Math.Tanh(Vertices[i].Y - 0.5) + 1) / 2.0;
             }
         }
 
-        public static Graph GenerateEulerianGraph(int order, Random random, int maxDegree)
+        public static Graph GenerateEmptyGraph(int order)
+        {
+            return new Graph(order);
+        }
+
+        public static Graph GenerateCycleGraph(int order)
         {
             Graph g = new Graph(order);
-            int[] degrees = new int[order];
             for (int i = 0; i < order; i++)
             {
-                degrees[i] = (int)(random.NextDouble() * 2 * (maxDegree / 2) + 2);
+                g.AddEdge(i, (i + 1) % order);
             }
+            return g;
+        }
+
+        public static Graph GenerateCompleteGraph(int order)
+        {
+            Graph g = new Graph(order);
             for (int i = 0; i < order; i++)
             {
-                while (g.VertexDegree(i) < degrees[i])
+                for (int j = 0; j < order; j++)
                 {
-                    int vertex2 = (int)(random.NextDouble() * order);
-                    if (g.VertexDegree(vertex2) < degrees[vertex2])
+                    if (i != j)
                     {
-                        g.AddEdge(i, vertex2);
+                        g.AdjacencyMatrix[i, j] = true;
                     }
                 }
             }
             return g;
         }
 
-        public int Order { get => order; }
+        public static Graph GenerateHamiltonianGraph(int order, Random random, int minExtra)
+        {
+            Graph g = new Graph(order);
+            for (int i = 0; i < order; i++)
+            {
+                g.AddEdge(i, (i + 1) % order);
+            }
+            for (int i = 0; i < Math.Max(minExtra, random.Next() % order); i++)
+            {
+                int a = 0, b = 0;
+                while (a == b)
+                {
+                    a = random.Next() % order;
+                    b = random.Next() % order;
+                }
+                g.AddEdge(a, b);
+                
+            }
+            return g;
+        }
 
-        public Vertex[] Vertices { get => vertices; }
+        public static Graph GenerateEulerianGraph(int order, Random random, int maxcycle)
+        {
+            List<Graph> cycles = new List<Graph>();
+            int total = 0;
+            while (total < order)
+            {
+                int cycle = Math.Min((random.Next() % (maxcycle - 1)) + 2, order - total);
+                total += cycle;
+                cycles.Add(GenerateCycleGraph(cycle));
+            }
+            Graph g = cycles[0];
+            for (int i = 1; i < cycles.Count; i++)
+            {
+                g.MergeGraphs(cycles[i], random.Next() % g.Order, random.Next() % cycles[i].Order);
+            }
+            return g;
+        }
+
+        public int Degree {
+            get {
+                int degree = 0;
+                for (int i = 0; i < Order; i++)
+                {
+                    degree += GetVertex(i).Degree;
+                }
+                return degree / 2;
+            }
+        }
+
+        public int MaxDegree
+        {
+            get
+            {
+                int maxDegree = 0;
+                for (int i = 0; i < Order; i++)
+                {
+                    if (Vertices[i].Degree > maxDegree)
+                    {
+                        maxDegree = Vertices[i].Degree;
+                    }
+                }
+                return maxDegree;
+            }
+        }
+
+        public int MaxDegreeIndex
+        {
+            get
+            {
+                int maxDegree = 0;
+                int maxIndex = 0;
+                for (int i = 0; i < Order; i++)
+                {
+                    if (Vertices[i].Degree > maxDegree)
+                    {
+                        maxDegree = Vertices[i].Degree;
+                        maxIndex = i;
+                    }
+                }
+                return maxIndex;
+            }
+        }
+
+        public int Order { get; private set; }
+
+        public Vertex[] Vertices { get; private set; }
         
-        public bool[,] AdjacencyMatrix { get => adjMatrix; }
+        public bool[,] AdjacencyMatrix { get; private set; }
 
     }
 }

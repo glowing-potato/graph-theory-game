@@ -140,19 +140,65 @@ namespace GraphGenerator
         // constructor
         public GenerateAdgacencyMatricies()
         {
-            //generateGraphsForLevels(1,20);
-            Random random = new Random();
-            Graph graph = Graph.GenerateEulerianGraph((int)(random.NextDouble() * 20), random, 7);
-            graph.SpreadVertices(10, 0.5, 0.1);
-            Console.WriteLine(Convert.ToJSON(graph));
+            StreamWriter writer = new StreamWriter("D:/GraphTheoryGame/graph-theory-game/GraphGenerator/eulerian_trails.json");
+            using (writer)
+            {
+                writer.Write("[\n  ");
+
+                Random random = new Random();
+                for (int i = 0; i < 50; i++)
+                {
+                    Graph graph = Graph.GenerateEulerianGraph(i / 5 + 5, random, (i + 3) / 5 + 3);
+
+                    List<KeyValuePair<int, int>> edges = graph.GetEdges();
+                    KeyValuePair<int, int> edge = edges[random.Next() % edges.Count];
+                    //graph.RemoveEdge(edge.Key, edge.Value);
+                    if (!graph.HasEulerianPath())
+                    {
+                        Console.WriteLine("Graph was not valid");
+                        i--;
+                        continue;
+                    }
+                    graph.SpreadVertices(200, random, 1.5, 0.01, true, 0.01);
+                    writer.Write(Convert.ToJSON(graph) + (i < 49 ? ",\n  " : "\n"));
+                }
+                writer.Write("]");
+            }
+
+            StreamWriter writer2 = new StreamWriter("D:/GraphTheoryGame/graph-theory-game/GraphGenerator/hamiltonian_paths.json");
+            using (writer2)
+            {
+                writer2.Write("[\n  ");
+
+                Random random = new Random();
+                for (int i = 0; i < 50; i++)
+                {
+                    Graph graph = Graph.GenerateHamiltonianGraph(i / 5 + 5, random, (i + 3) / 5);
+
+                    List<KeyValuePair<int, int>> edges = graph.GetEdges();
+                    KeyValuePair<int, int> edge = edges[random.Next() % edges.Count];
+                    //graph.RemoveEdge(edge.Key, edge.Value);
+                    /*if (!graph.IsHamiltonian())
+                    {
+                        Console.WriteLine("Graph was not valid");
+                        i--;
+                        continue;
+                    }*/
+                    graph.SpreadVertices(200, random, 1.5, 0.01, true, 0.01);
+                    writer2.Write(Convert.ToJSON(graph) + (i < 49 ? ",\n  " : "\n"));
+                }
+                writer2.Write("]");
+            }
         }
     }
+
 
     class Program
     {
         static void Main(string[] args)
         {
             GenerateAdgacencyMatricies gam = new GenerateAdgacencyMatricies();
+            Console.ReadKey();
         }
     }
 }
