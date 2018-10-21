@@ -1,14 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import LevelData from "./LevelData";
 import background from "./background.svg";
 import "./LevelsMenu.css";
-
-const levels = [
-    { "id": "euler-trail", "name": "Euler Trails" },
-    { "id": "hamilton-path", "name": "Hamiltonian Paths" },
-    { "id": "euler-cycle", "name": "Euler Cycles" },
-    { "id": "hamilton-circuit", "name": "Hamiltonian Circuits" }
-];
 
 export default class LevelsMenu extends React.Component {
     render() {
@@ -16,7 +10,7 @@ export default class LevelsMenu extends React.Component {
             <div className="levels-menu">
                 <h1>Select Game Mode</h1>
                 <ul>
-                    {levels.map((level, i) => (
+                    {LevelData.map((level, i) => (
                         <li key={i}>
                             <Link to={`/${level.id}/`}>{level.name}</Link>
                         </li>
