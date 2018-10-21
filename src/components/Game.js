@@ -43,8 +43,7 @@ export default class Game extends React.Component {
         return (
             <div className="game">
             <Link className="back-button"
-                to={"/" + window.location.href.split("/")[window.location.href.split("/").length - 2]}>
-                {"◀ Back"}</Link>
+                to={"/" + window.location.href.split("/")[window.location.href.split("/").length - 2]}>&#9664; Back</Link>
                 {this.props.children}
                 {this.props.won && (
                     <div className="winning">
