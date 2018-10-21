@@ -1,11 +1,47 @@
 import React from "react";
 import Game from "../components/Game";
+import TraceableGraph from "../components/TraceableGraph";
+import data from "./HamiltonWalk.json";
 
-export default class HamiltonianCycle extends React.Component {
+export default class HamiltonCycle extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            "won": false,
+            "nonce": -1
+        };
+        this.evaluateWin = this.evaluateWin.bind(this);
+        this.handleReload = this.handleReload.bind(this);
+    }
+
+    componentDidUpdate(lastProps) {
+        if (lastProps.match !== this.props.match) {
+            this.setState({
+                "won": false
+            });
+        }
+    }
+
+    evaluateWin(history) {
+        if (history.length === data[this.props.match.params.level - 1].v.length) {
+            this.setState({
+                "won": true
+            });
+        }
+    }
+
+    handleReload(nonce) {
+        this.setState({
+            "nonce": nonce,
+            "won": false
+        });
+    }
+
     render() {
         return (
-            <Game>
-                Hamiltonian Cycle Problem #{this.props.match.params.level}
+            <Game won={this.state.won} onReload={this.handleReload} levels={data.length}>
+                <TraceableGraph verts={data[this.props.match.params.level - 1].v} edges={data[this.props.match.params.level - 1].e}
+                    onGraphChange={this.evaluateWin} nonce={this.state.nonce} hamiltonian={true} />
             </Game>
         );
     }
