@@ -49,7 +49,7 @@ export default class TraceableGraph extends React.Component {
     }
 
     handleVertexMouseDown(v, ev) {
-        if (this.state.history.length === 0) {
+        if (this.state.history.length < 2) {
             this.setState({
                 "history": [ { "v": v } ],
                 "drag": v
