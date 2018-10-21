@@ -4,9 +4,15 @@ import "./Game.css";
 
 class NextLink extends React.Component {
     render() {
-        return (
-            <Link onClick={this.props.onClick} to={`/${this.props.match.params.type}/${parseInt(this.props.match.params.number) + 1}`}>Next Puzzle</Link>
-        );
+        if (this.props.match.params.number >= this.props.levels) {
+            return (
+                <Link to={`/${this.props.match.params.type}`}>Next Group</Link>
+            );
+        } else {
+            return (
+                <Link to={`/${this.props.match.params.type}/${parseInt(this.props.match.params.number) + 1}`}>Next Puzzle</Link>
+            );
+        }
     }
 }
 
@@ -55,9 +61,7 @@ export default class Game extends React.Component {
                                         <a onClick={this.reload}>Replay</a>
                                     </li>
                                     <li>
-                                        <BrowserRouter>
-                                            <Route path="/:type/:number" render={(props) => <NextLink onClick={this.reload} {...props} />} />
-                                        </BrowserRouter>
+                                        <Route path="/:type/:number" render={(props) => <NextLink onClick={this.reload} levels={this.props.levels} {...props} />} />
                                     </li>
                                 </ul>
                             </main>

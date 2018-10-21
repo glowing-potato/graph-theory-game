@@ -15,7 +15,7 @@ export default class EulerCycle extends React.Component {
     }
 
     componentDidUpdate(lastProps) {
-        if (lastProps.match !== this.props.match) {
+        if (lastProps.match.params.level !== this.props.match.params.level) {
             this.setState({
                 "won": false
             });
@@ -39,7 +39,7 @@ export default class EulerCycle extends React.Component {
 
     render() {
         return (
-            <Game won={this.state.won} onReload={this.handleReload}>
+            <Game won={this.state.won} onReload={this.handleReload} levels={data.length}>
                 <TraceableGraph verts={data[this.props.match.params.level - 1].v} edges={data[this.props.match.params.level - 1].e}
                     onGraphChange={this.evaluateWin} nonce={this.state.nonce} />
             </Game>
