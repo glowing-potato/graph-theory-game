@@ -5,16 +5,16 @@ import LevelMenu from "./menus/LevelMenu";
 import AboutMenu from "./menus/AboutMenu";
 import LevelsMenu from "./menus/LevelsMenu";
 import SettingsMenu from "./menus/SettingsMenu";
-import EulerWalk from "./games/EulerWalk";
-import HamiltonWalk from "./games/HamiltonWalk";
+import EulerTrail from "./games/EulerTrail";
+import HamiltonPath from "./games/HamiltonPath";
 
 export default class App extends React.Component {
     render() {
         return (
             <BrowserRouter>
                 <Switch>
-                    <Route path="/euler-walk/:level" component={EulerWalk} />
-                    <Route path="/hamilton-walk/:level" component={HamiltonWalk} />
+                    <Route path="/euler-trail/:level" component={EulerTrail} />
+                    <Route path="/hamilton-path/:level" component={HamiltonPath} />
                     <Route path="/about" component={AboutMenu} />
                     <Route path="/levels" component={LevelsMenu} />
                     <Route path="/settings" component={SettingsMenu} />

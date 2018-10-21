@@ -1,9 +1,9 @@
 import React from "react";
 import Game from "../components/Game";
 import TraceableGraph from "../components/TraceableGraph";
-import data from "./HamiltonWalk.json";
+import data from "./EulerTrail.json";
 
-export default class HamiltonCycle extends React.Component {
+export default class EulerTrail extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -15,7 +15,7 @@ export default class HamiltonCycle extends React.Component {
     }
 
     componentDidUpdate(lastProps) {
-        if (lastProps.match !== this.props.match) {
+        if (lastProps.match.params.level !== this.props.match.params.level) {
             this.setState({
                 "won": false
             });
@@ -23,7 +23,7 @@ export default class HamiltonCycle extends React.Component {
     }
 
     evaluateWin(history) {
-        if (history.length === data[this.props.match.params.level - 1].v.length) {
+        if (history.length === data[this.props.match.params.level - 1].e.length + 1) {
             this.setState({
                 "won": true
             });
@@ -41,7 +41,7 @@ export default class HamiltonCycle extends React.Component {
         return (
             <Game won={this.state.won} onReload={this.handleReload} levels={data.length}>
                 <TraceableGraph verts={data[this.props.match.params.level - 1].v} edges={data[this.props.match.params.level - 1].e}
-                    onGraphChange={this.evaluateWin} nonce={this.state.nonce} hamiltonian={true} />
+                    onGraphChange={this.evaluateWin} nonce={this.state.nonce} />
             </Game>
         );
     }

@@ -4,8 +4,8 @@ import background from "./background.svg";
 import "./LevelsMenu.css";
 
 const levels = [
-    { "id": "euler-walk", "name": "Euler Walks" },
-    { "id": "hamilton-walk", "name": "Hamiltonian Walks" }
+    { "id": "euler-trail", "name": "Euler Trails" },
+    { "id": "hamilton-path", "name": "Hamiltonian Paths" }
 ];
 
 export default class LevelsMenu extends React.Component {
